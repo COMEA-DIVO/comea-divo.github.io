@@ -826,11 +826,24 @@
                 
                 // 更新指定游戏的时长（根据游戏appid）
                 data.games.forEach(game => {
-                    const gameEl = document.getElementById(game.appid.toString());
-                    if (gameEl) {
-                        gameEl.innerHTML = `<span class="number">${game.playtime_hours}h</span> ${game.name}`;
-                    } else {
-                        console.warn(`未找到appid为 ${game.appid} 的元素`);
+                    const appid = game.appid;
+                    
+                    // 如果是 GTA V Enhanced，加上固定 473 小时
+                    if (appid === 3240220) {
+                        const totalHours = game.playtime_hours + 473;
+                        const gameEl = document.getElementById('3240220');
+                        if (gameEl) {
+                            gameEl.innerHTML = `<span class="number">${totalHours}h</span> GTA V Enhanced`;
+                        }
+                    }
+                        // 其他游戏正常更新
+                    else {
+                        const gameEl = document.getElementById(appid.toString());
+                        if (gameEl) {
+                            gameEl.innerHTML = `<span class="number">${game.playtime_hours}h</span> ${game.name}`;
+                        } else {
+                            console.warn(`未找到 appid 为 ${appid} 的元素`);
+                        }
                     }
                 });
             } catch (err) {
@@ -844,6 +857,7 @@
 </body>
 
 </html>
+
 
 
 
