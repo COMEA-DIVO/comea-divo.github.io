@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CØMEA · 个人空间</title>
+    <style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --border-subtle: #30363d;
+            --accent: #2f81f7;
+            --card-bg: #161b22;
+            --shadow: 0 8px 24px rgba(0,0,0,0.4);
+        }
+
+        .light-theme {
+            --bg-primary: #f6f8fa;
+            --bg-secondary: #ffffff;
+            --text-primary: #1f2328;
+            --text-secondary: #59636e;
+            --border-subtle: #d0d7de;
+            --accent: #0969da;
+            --card-bg: #ffffff;
+            --shadow: 0 8px 24px rgba(140,149,159,0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            padding: 2rem 1.5rem;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 2px solid var(--accent);
+            object-fit: cover;
+            background: var(--bg-secondary);
+        }
+
+        .logo a {
+            font-size: 1.8rem;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+
+        .logo span { color: var(--accent); }
+
+        .theme-toggle {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-subtle);
+            border-radius: 40px;
+            padding: 0.4rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .theme-toggle:hover { border-color: var(--accent); }
+
+        .section {
+            margin-bottom: 3.5rem;
+            border-bottom: 1px solid var(--border-subtle);
+            padding-bottom: 2rem;
+        }
+
+        .section:last-child { border-bottom: none; }
+
+        .section h2 {
+            font-size: 2rem;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            margin-bottom: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .section h2::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border-subtle);
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-subtle);
+            border-radius: 20px;
+            padding: 1.8rem 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 1.8rem;
+        }
+
+        .info-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        .info-item {
+            flex: 1 1 200px;
+        }
+
+        .info-item .label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.3rem;
+        }
+
+        .info-item .value {
+            font-size: 1.3rem;
+            font-weight: 500;
+        }
+
+        .badge {
+            display: inline-block;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-subtle);
+            border-radius: 40px;
+            padding: 0.2rem 1rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+            white-space: nowrap;
+        }
+
+        .badge span { color: var(--accent); font-weight: 600; }
+
+        .stat-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.2rem;
+            margin: 1.2rem 0;
+        }
+
+        .stat {
+            background: var(--bg-primary);
+            border-radius: 12px;
+            padding: 0.5rem 1.2rem;
+            border: 1px solid var(--border-subtle);
+        }
+
+        .stat .number {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin-right: 0.3rem;
+        }
+
+        .fresh-btn {
+            background: none;
+            border: 1px solid var(--border-subtle);
+            color: var(--text-secondary);
+            padding: 0.2rem 1rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            margin-left: 1rem;
+            transition: 0.1s;
+        }
+
+        .fresh-btn:hover {
+            border-color: var(--accent);
+            color: var(--text-primary);
+        }
+
+        .quote {
+            font-style: italic;
+            color: var(--text-secondary);
+            border-left: 4px solid var(--accent);
+            padding-left: 1.5rem;
+            margin: 2rem 0;
+            font-size: 1.1rem;
+        }
+
+        .footer-meta {
+            margin-top: 4rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-subtle);
+            color: var(--text-secondary);
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .footer-meta a { 
+            color: var(--text-secondary); 
+            text-decoration: none; 
+            margin-left: 1.5rem;
+            transition: color 0.1s;
+        }
+        .footer-meta a:hover { color: var(--accent); }
+
+        .contact-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            background: var(--bg-primary);
+            border-radius: 16px;
+            padding: 1.2rem;
+            margin-top: 1rem;
+        }
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .contact-item a {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .contact-item a:hover {
+            color: var(--accent);
+            text-decoration: underline;
+        }
+        .contact-item .prefix {
+            color: var(--text-secondary);
+        }
+
+        .artist-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .music-tag {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-subtle);
+            border-radius: 40px;
+            padding: 0.2rem 1rem;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+        }
+
+        @media (max-width: 600px) {
+            body { padding: 1.5rem 1rem; }
+            .card { padding: 1.5rem; }
+            .footer-meta a { margin-left: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 导航 + 头像 + 主题 -->
+        <div class="navbar">
+            <div class="nav-left">
+                <img class="avatar" src="https://i0.hdslb.com/bfs/face/74c9956aeb15a4c97becbb79ec2db0b62c552054.jpg@240w_240h_1c_1s_!web-avatar-nav.avif" alt="CØMEA avatar">
+                <div class="logo"><a href="#">CØMEA<span>.</span></a></div>
+            </div>
+            <div class="theme-toggle" id="theme-toggle" tabindex="0" role="button">
+                <span id="theme-icon">🌙</span>
+                <span id="theme-text">暗色</span>
+            </div>
+        </div>
+
+        <!-- 第一部分：基本信息 -->
+        <section class="section">
+            <h2>📌 基本信息</h2>
+            <div class="card">
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="label">名称</div>
+                        <div class="value">CØMEA</div>
+                        <div style="color: var(--text-secondary);">/'koʊ.mi.ə/</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="label">地点</div>
+                        <div class="value">上海, 中国</div>
+                        <div style="color: var(--text-secondary);">UTC+8</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="label">语言</div>
+                        <div class="value">中文 · 英语</div>
+                    </div>
+                </div>
+                <div style="margin: 1.5rem 0 1rem;">
+                    <span class="badge">☑ Certified idiot</span>
+                    <span class="badge">Gamer</span>
+                    <span class="badge">DJ</span>
+                    <span class="badge">Cyclist</span>
+                    <span class="badge">Geek</span>
+                </div>
+
+                <div class="contact-row">
+                    <div class="contact-item">
+                        <span class="prefix">Steam:</span>
+                        <a href="https://steamcommunity.com/id/UEG_COMEA/" target="_blank" rel="noopener">CØMEA</a>
+                    </div>
+                    <div class="contact-item">
+                        <span class="prefix">Epic:</span>
+                        <span>CØMEA</span>
+                    </div>
+                    <div class="contact-item">
+                        <span class="prefix">Discord:</span>
+                        <span>comea12</span>
+                    </div>
+                    <div class="contact-item">
+                        <span class="prefix">Bilibili:</span>
+                        <a href="https://space.bilibili.com/674610533" target="_blank" rel="noopener">674610533</a>
+                    </div>
+                    <div class="contact-item">
+                        <span class="prefix">WeChat:</span>
+                        <span>UEG_C0M34</span>
+                    </div>
+                    <div class="contact-item">
+                        <span class="prefix">QQ:</span>
+                        <span>UEGC0M34</span>
+                    </div>
+                </div>
+
+                <div style="margin-top: 1rem; color: var(--text-secondary); background: var(--bg-primary); border-radius: 12px; padding: 0.8rem 1.2rem;">
+                    📍 加好友请在
+                    <a href="https://steamcommunity.com/id/UEG_COMEA/" target="_blank" rel="noopener" style="color: var(--accent); text-decoration: underline; text-underline-offset: 2px;">
+                        我的Steam主页
+                    </a>
+                    下方留言或者添加备注, 否则可能被忽略。作弊/刷屏/骂人 → 移除。
+                </div>
+            </div>
+        </section>
+
+        <!-- 第二部分：爱好 -->
+        <section class="section">
+            <h2>🎧 爱好</h2>
+            <div class="card">
+                <div style="display: flex; flex-wrap: wrap; gap: 2rem;">
+                    <div style="flex: 1; min-width: 150px;">
+                        <h3 style="color: var(--accent); margin-bottom: 0.5rem;">🎵 EDM lover</h3>
+                        <p style="color: var(--text-secondary);">Craving Rave · 流媒体重度用户</p>
+                    </div>
+                    <div style="flex: 1; min-width: 150px;">
+                        <h3 style="color: var(--accent); margin-bottom: 0.5rem;">🚴 骑行</h3>
+                        <p style="color: var(--text-secondary);">JAVA FUOCO 6 2025</p>
+                    </div>
+                    <div style="flex: 1; min-width: 150px;">
+                        <h3 style="color: var(--accent); margin-bottom: 0.5rem;">⚙️ 硬件</h3>
+                        <p style="color: var(--text-secondary);">爱捣鼓但穷 (ain't that rich XD)</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 第三部分：游戏世界 -->
+        <section class="section">
+            <h2>🎮 游戏 · Another World</h2>
+            <div class="card">
+                <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem;">
+                    <span style="font-size: 1.4rem; font-weight: 600;">游戏库</span>
+                    <span class="stat"><span class="number" id="gameCount">85</span> 款游戏</span>
+                    <span class="stat"><span class="number">178</span> DLC</span>
+                    <span class="stat"><span class="number">41</span> 好友</span>
+                    <span class="stat"><span class="number">69</span> 截图</span>
+                    <button class="fresh-btn" id="refreshGameCount">↻ 刷新</button>
+                </div>
+
+                <div style="margin: 1.5rem 0;">
+                    <span class="badge">Steam 10级</span>
+                    <span class="badge">收藏代理人</span>
+                </div>
+
+                <div style="margin: 1.8rem 0;">
+                    <div style="display: flex; flex-wrap: wrap; gap: 2rem;">
+                        <div>
+                            <div style="color: var(--text-secondary); font-size: 0.9rem;">类型偏好</div>
+                            <div style="font-weight: 500;">FPS / TPS / SIM / RAC</div>
+                        </div>
+                        <div>
+                            <div style="color: var(--text-secondary); font-size: 0.9rem;">最爱工作室</div>
+                            <div style="font-weight: 500;">Embark</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-row">
+                    <div class="stat"><span class="number">250h</span> Apex Legends</div>
+                    <div class="stat"><span class="number">459h</span> GTA V 增强版</div>
+                    <div class="stat"><span class="number">51h</span> Wallpaper Engine</div>
+                </div>
+
+                <h3 style="margin: 1.8rem 0 1rem; font-size: 1.2rem;">✨ 高光成就</h3>
+                <ul style="color: var(--text-secondary); list-style: none;">
+                    <li style="margin-bottom: 0.6rem;">• COD 系列 100,000+ 击杀</li>
+                    <li style="margin-bottom: 0.6rem;">• Apex 双锤徽章</li>
+                    <li style="margin-bottom: 0.6rem;">• GTA Online 狙击 KD 4.0+ / 命中率 40%+</li>
+                    <li style="margin-bottom: 0.6rem;">• 多款赛车游戏榜首 (TMNF / Assoluto)</li>
+                </ul>
+
+                <div style="display: flex; flex-wrap: wrap; gap: 2rem; margin-top: 1.8rem;">
+                    <div>
+                        <h4 style="color: var(--accent);">最爱单机</h4>
+                        <p>《死亡搁浅》《看门狗》</p>
+                    </div>
+                    <div>
+                        <h4 style="color: var(--accent);">最期待</h4>
+                        <p>Death Stranding 2, GTA VI, COD MW4</p>
+                    </div>
+                </div>
+
+                <div class="quote">
+                    “Game is another world. Single-player for reflection, Online for friendship. Casually, no tryhard.”
+                </div>
+
+                <div style="color: var(--text-secondary); font-size: 0.95rem;">
+                    ⭐ 2025 Steam大奖提名委员 · 已完成所有任务
+                </div>
+            </div>
+        </section>
+
+        <!-- 第四部分：音乐世界 -->
+        <section class="section">
+            <h2>🎵 音乐 · EDM 信徒</h2>
+            <div class="card">
+                <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem;">
+                    <span style="font-size: 1.4rem; font-weight: 600;">歌单雷达</span>
+                    <span class="stat"><span class="number">1700+</span> 曲目</span>
+                    <span class="stat">涵盖 Progressive House / Future Bass / Melodic Dubstep</span>
+                </div>
+
+                <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                    从电子到流行, 从游戏原声到地下锐舞——音乐是我游戏之外的另一个精神角落。
+                    歌单里反复出现的名字, 构成了我的听觉DNA。
+                </p>
+
+                <h3 style="margin: 1.5rem 0 1rem; font-size: 1.2rem;">🎧 最爱艺术家 (常驻嘉宾)</h3>
+                <div class="artist-cloud">
+                    <span class="music-tag">Martin Garrix</span>
+                    <span class="music-tag">Avicii</span>
+                    <span class="music-tag">The Chainsmokers</span>
+                    <span class="music-tag">Illenium</span>
+                    <span class="music-tag">Seven Lions</span>
+                    <span class="music-tag">Kygo</span>
+                    <span class="music-tag">San Holo</span>
+                    <span class="music-tag">Skrillex</span>
+                    <span class="music-tag">Vicetone</span>
+                    <span class="music-tag">Gryffin</span>
+                    <span class="music-tag">Don Diablo</span>
+                    <span class="music-tag">R3HAB</span>
+                    <span class="music-tag">Dabin</span>
+                    <span class="music-tag">William Black</span>
+                    <span class="music-tag">SABAI</span>
+                    <span class="music-tag">MitiS</span>
+                    <span class="music-tag">Elephante</span>
+                    <span class="music-tag">Far Out</span>
+                    <span class="music-tag">BEAUZ</span>
+                    <span class="music-tag">NURKO</span>
+                    <span class="music-tag">Last Heroes</span>
+                </div>
+
+                <h3 style="margin: 1.8rem 0 1rem; font-size: 1.2rem;">🎮 游戏原声特别关注</h3>
+                <div class="artist-cloud">
+                    <span class="music-tag">Embark Studios (THE FINALS / ARC Raiders)</span>
+                    <span class="music-tag">GTA V</span>
+                    <span class="music-tag">Battlefield 4</span>
+                    <span class="music-tag">Asphalt 8</span>
+                </div>
+
+                <div style="margin-top: 1.8rem; background: var(--bg-primary); border-radius: 16px; padding: 1rem 1.5rem;">
+                    <p style="color: var(--text-secondary);">
+                        🎶 “从《Scary Monsters and Nice Sprites》到《dashstar*》, 从《Wake Me Up》到《Feel Good》—— 
+                        节奏是我的第二语言, 而EDM是永远的背景音。”
+                    </p>
+                </div>
+
+                <div style="margin-top: 1.5rem;">
+                    <span class="badge">Progressive House</span>
+                    <span class="badge">Future Bass</span>
+                    <span class="badge">Melodic Dubstep</span>
+                    <span class="badge">Trap</span>
+                    <span class="badge">House</span>
+                    <span class="badge">Game Soundtrack</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 底部：社交链接 -->
+        <div class="footer-meta">
+            <div>© 2026 CØMEA</div>
+            <div>
+                <a href="https://steamcommunity.com/id/UEG_COMEA/" target="_blank" rel="noopener">Steam</a>
+                <a href="https://open.spotify.com/user/31eqefguro56e72zep7prc6uv7t4?si=6b3bf0527a114598" target="_blank" rel="noopener">Spotify</a>
+                <a href="https://space.bilibili.com/674610533" target="_blank" rel="noopener">Bilibili</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const toggle = document.getElementById('theme-toggle');
+            const icon = document.getElementById('theme-icon');
+            const text = document.getElementById('theme-text');
+            const body = document.body;
+
+            const savedTheme = localStorage.getItem('comea-theme');
+            if (savedTheme === 'light') {
+                body.classList.add('light-theme');
+                icon.innerText = '☀️';
+                text.innerText = '亮色';
+            }
+
+            toggle.addEventListener('click', () => {
+                if (body.classList.contains('light-theme')) {
+                    body.classList.remove('light-theme');
+                    icon.innerText = '🌙';
+                    text.innerText = '暗色';
+                    localStorage.setItem('comea-theme', 'dark');
+                } else {
+                    body.classList.add('light-theme');
+                    icon.innerText = '☀️';
+                    text.innerText = '亮色';
+                    localStorage.setItem('comea-theme', 'light');
+                }
+            });
+
+            const gameCountSpan = document.getElementById('gameCount');
+            const refreshBtn = document.getElementById('refreshGameCount');
+            refreshBtn.addEventListener('click', function() {
+                const current = parseInt(gameCountSpan.innerText);
+                const change = Math.floor(Math.random() * 5) - 2;
+                let newCount = current + change;
+                if (newCount < 80) newCount = 80;
+                if (newCount > 90) newCount = 90;
+                gameCountSpan.innerText = newCount;
+
+                alert('[演示模式] 游戏数量已模拟更新。\n\n要获取真实 Steam 数据，请使用以下方法：\n1. 获取 Steam API 密钥 (https://steamcommunity.com/dev/apikey)\n2. 替换下方代码中的 YOUR_KEY 和 STEAM_ID\n3. 通过后端代理或支持 CORS 的服务调用\n\nfetch(`https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/?key=YOUR_KEY&steamid=76561199131331378&include_appinfo=false&format=json`)\n  .then(r => r.json())\n  .then(data => { const count = data.response.game_count; });');
+            });
+
+            toggle.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle.click(); } });
+            refreshBtn.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); refreshBtn.click(); } });
+        })();
+    </script>
+</body>
+</html>
