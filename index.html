@@ -799,6 +799,7 @@
             animate();
         })();
         async function loadSteamData() {
+            console.log('loadSteamData 被调用');
             try {
                 const res = await fetch('/assets/data/steam.json');
                 const data = await res.json();
@@ -831,6 +832,7 @@
 </body>
 
 </html>
+
 
 
 
