@@ -802,25 +802,37 @@
             console.log('loadSteamData 被调用');
             try {
                 const res = await fetch('/assets/data/steam.json');
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
                 const data = await res.json();
-                // 更新游戏时长（按 appid 匹配，具体参考之前代码）
-                // ...（保持原有时长更新逻辑）
-                // 更新当前游戏状态（如果有 current-game 元素）
-                // ...
+                console.log('数据加载成功', data);
+                
                 // 更新游戏总数
+                document.getElementById('gameCount').textContent = data.gameCount;
 
-                if (data.gameCount !== undefined) {
-                    document.getElementById('gameCount').textContent = data.gameCount;
-                }
                 // 更新好友数量
-                if (data.friendCount !== undefined) {
-                    document.getElementById('friendCount').textContent = data.friendCount;
-                }
+
+                document.getElementById('friendCount').textContent = data.friendCount;
+                
                 // 更新徽章数量
-                if (data.badgeCount !== undefined) {
-                    document.getElementById('badgeCount').textContent = data.badgeCount;
+                document.getElementById('badgeCount').textContent = data.badgeCount;
+
+                // 更新当前游戏状态
+                const currentGameEl = document.getElementById('current-game');
+                if (currentGameEl) {
+                    currentGameEl.innerHTML = data.currentlyPlaying 
+                        ? `🎮 当前游戏：${data.currentlyPlaying}`
+                        : '🎮 当前游戏：暂无';
                 }
                 
+                // 更新指定游戏的时长（根据游戏appid）
+                data.games.forEach(game => {
+                    const gameEl = document.getElementById(game.appid.toString());
+                    if (gameEl) {
+                        gameEl.innerHTML = `<span class="number">${game.playtime_hours}h</span> ${game.name}`;
+                    } else {
+                        console.warn(`未找到appid为 ${game.appid} 的元素`);
+                    }
+                });
             } catch (err) {
                 console.error('加载 Steam 数据失败', err);
             }
@@ -832,6 +844,7 @@
 </body>
 
 </html>
+
 
 
 
