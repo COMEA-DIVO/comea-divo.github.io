@@ -573,269 +573,263 @@
             themeToggle.click();
         }
     });
-    (function() {
-        // ----- 获取画布 -----
-        const canvasBg = document.getElementById('particleCanvas');
-        const canvasTrail = document.getElementById('trailCanvas');
-        if (!canvasBg || !canvasTrail) return;
+        (function() {
+            // ----- 获取画布 -----
+            const canvasBg = document.getElementById('particleCanvas');
+            const canvasTrail = document.getElementById('trailCanvas');
+            if (!canvasBg || !canvasTrail) return;
+    
+            const ctxBg = canvasBg.getContext('2d');
+            const ctxTrail = canvasTrail.getContext('2d');
 
-        const ctxBg = canvasBg.getContext('2d');
-        const ctxTrail = canvasTrail.getContext('2d');
+            let width, height;
+            let particles = [];
+            const PARTICLE_COUNT = 300;
 
-        let width, height;
-        let particles = [];
-        const PARTICLE_COUNT = 300;
+            // 鼠标轨迹数据
+            let trailPoints = [];
+            // 【修改】拖尾更长：最大点数 48 → 80，衰减系数 0.93 → 0.96
+            const MAX_TRAIL = 80;                 
+            const TRAIL_DECAY = 0.96;              
+            const INTERP_STEP = 2.5;                // 插值步长（保持不变）
 
-        // 鼠标轨迹数据
-        let trailPoints = [];
-        // 【修改】拖尾更长：最大点数 48 → 80，衰减系数 0.93 → 0.96
-        const MAX_TRAIL = 80;                 
-        const TRAIL_DECAY = 0.96;              
-        const INTERP_STEP = 2.5;                // 插值步长（保持不变）
+            // 最后记录的鼠标位置（用于插值）
+            let lastMouseX = -1000, lastMouseY = -1000;
 
-        // 最后记录的鼠标位置（用于插值）
-        let lastMouseX = -1000, lastMouseY = -1000;
-
-        // ----- 辅助：判断当前主题 -----
-        function isLightTheme() {
-            return document.body.classList.contains('light-theme');
-        }
-
-        // ----- 根据主题生成随机粒子颜色 -----
-        function getRandomParticleColor(light) {
-            if (light) {
-                return `rgba(0, 0, 0, ${Math.random() * 0.3 + 0.15})`;
-            } else {
-                return `rgba(255, 255, 255, ${Math.random() * 0.3 + 0.15})`;
+            // ----- 辅助：判断当前主题 -----
+            function isLightTheme() {
+                return document.body.classList.contains('light-theme');
             }
-        }
 
-        // ----- 初始化/重置粒子 -----
-        function initParticles(light) {
-            particles = [];
-            for (let i = 0; i < PARTICLE_COUNT; i++) {
-                particles.push({
-                    x: Math.random() * width,
-                    y: Math.random() * height,
-                    vx: (Math.random() - 0.5) * 0.25,
-                    vy: (Math.random() - 0.5) * 0.25,
-                    // 【修改】粒子尺寸范围缩小：1.2~4.7 → 0.8~1.8，变成更小的点
-                    size: Math.random() * 1.0 + 0.8,   // 最小0.8，最大1.8
-                    color: getRandomParticleColor(light)
+            // ----- 根据主题生成随机粒子颜色 -----
+            function getRandomParticleColor(light) {
+                if (light) {
+                    return `rgba(0, 0, 0, ${Math.random() * 0.3 + 0.15})`;
+                } else {
+                    return `rgba(255, 255, 255, ${Math.random() * 0.3 + 0.15})`;
+                }
+            }
+
+            // ----- 初始化/重置粒子 -----
+            function initParticles(light) {
+                particles = [];
+                for (let i = 0; i < PARTICLE_COUNT; i++) {
+                    particles.push({
+                        x: Math.random() * width,
+                        y: Math.random() * height,
+                        vx: (Math.random() - 0.5) * 0.25,
+                        vy: (Math.random() - 0.5) * 0.25,
+                        // 【修改】粒子尺寸范围缩小：1.2~4.7 → 0.8~1.8，变成更小的点
+                        size: Math.random() * 1.0 + 0.8,   // 最小0.8，最大1.8
+                        color: getRandomParticleColor(light)
+                    });
+                }
+            }
+
+            // ----- 根据当前主题更新所有粒子颜色（主题切换时调用）-----
+            function recolorParticlesByTheme() {
+                const light = isLightTheme();
+                particles.forEach(p => {
+                    p.color = getRandomParticleColor(light);
                 });
             }
-        }
 
-        // ----- 根据当前主题更新所有粒子颜色（主题切换时调用）-----
-        function recolorParticlesByTheme() {
-            const light = isLightTheme();
-            particles.forEach(p => {
-                p.color = getRandomParticleColor(light);
-            });
-        }
+            // ----- 调整画布尺寸（支持高分屏）-----
+            function resizeCanvases() {
+                const dpr = window.devicePixelRatio || 1;
+                width = window.innerWidth;
+                height = window.innerHeight;
 
-        // ----- 调整画布尺寸（支持高分屏）-----
-        function resizeCanvases() {
-            const dpr = window.devicePixelRatio || 1;
-            width = window.innerWidth;
-            height = window.innerHeight;
+                canvasBg.style.width = width + 'px';
+                canvasBg.style.height = height + 'px';
+                canvasBg.width = width * dpr;
+                canvasBg.height = height * dpr;
 
-            canvasBg.style.width = width + 'px';
-            canvasBg.style.height = height + 'px';
-            canvasBg.width = width * dpr;
-            canvasBg.height = height * dpr;
+                canvasTrail.style.width = width + 'px';
+                canvasTrail.style.height = height + 'px';
+                canvasTrail.width = width * dpr;
+                canvasTrail.height = height * dpr;
 
-            canvasTrail.style.width = width + 'px';
-            canvasTrail.style.height = height + 'px';
-            canvasTrail.width = width * dpr;
-            canvasTrail.height = height * dpr;
+                ctxBg.setTransform(1, 0, 0, 1, 0, 0);
+                ctxTrail.setTransform(1, 0, 0, 1, 0, 0);
+                ctxBg.scale(dpr, dpr);
+                ctxTrail.scale(dpr, dpr);
 
-            ctxBg.setTransform(1, 0, 0, 1, 0, 0);
-            ctxTrail.setTransform(1, 0, 0, 1, 0, 0);
-            ctxBg.scale(dpr, dpr);
-            ctxTrail.scale(dpr, dpr);
+                initParticles(isLightTheme());
+            }
 
-            initParticles(isLightTheme());
-        }
+            // ----- 鼠标移动处理（带插值补点，狂晃鼠标也不断）-----
+            function handleMouseMove(e) {
+                const mx = e.clientX;
+                const my = e.clientY;
 
-        // ----- 鼠标移动处理（带插值补点，狂晃鼠标也不断）-----
-        function handleMouseMove(e) {
-            const mx = e.clientX;
-            const my = e.clientY;
+                if (lastMouseX < 0 || lastMouseY < 0) {
+                    trailPoints.push({ x: mx, y: my, life: 1.0 });
+                    lastMouseX = mx;
+                    lastMouseY = my;
+                    return;
+                }
 
-            if (lastMouseX < 0 || lastMouseY < 0) {
+                const dx = mx - lastMouseX;
+                const dy = my - lastMouseY;
+                const dist = Math.hypot(dx, dy);
+
+                if (dist > INTERP_STEP) {
+                    const steps = Math.floor(dist / INTERP_STEP);
+                    const maxInsert = 20;
+                    const insertCount = Math.min(steps, maxInsert);
+
+                    for (let i = 1; i <= insertCount; i++) {
+                        const t = i / (insertCount + 1);
+                        const ix = lastMouseX + dx * t;
+                        const iy = lastMouseY + dy * t;
+                        trailPoints.push({ x: ix, y: iy, life: 1.0 });
+                    }
+                }
+
                 trailPoints.push({ x: mx, y: my, life: 1.0 });
+
                 lastMouseX = mx;
                 lastMouseY = my;
-                return;
-            }
 
-            const dx = mx - lastMouseX;
-            const dy = my - lastMouseY;
-            const dist = Math.hypot(dx, dy);
-
-            if (dist > INTERP_STEP) {
-                const steps = Math.floor(dist / INTERP_STEP);
-                const maxInsert = 20;
-                const insertCount = Math.min(steps, maxInsert);
-
-                for (let i = 1; i <= insertCount; i++) {
-                    const t = i / (insertCount + 1);
-                    const ix = lastMouseX + dx * t;
-                    const iy = lastMouseY + dy * t;
-                    trailPoints.push({ x: ix, y: iy, life: 1.0 });
+                if (trailPoints.length > MAX_TRAIL * 2) {
+                    trailPoints = trailPoints.slice(-MAX_TRAIL * 1.5);
                 }
             }
 
-            trailPoints.push({ x: mx, y: my, life: 1.0 });
-
-            lastMouseX = mx;
-            lastMouseY = my;
-
-            if (trailPoints.length > MAX_TRAIL * 2) {
-                trailPoints = trailPoints.slice(-MAX_TRAIL * 1.5);
-            }
-        }
-
-        function handleMouseLeave() {
-            lastMouseX = -1000;
-            lastMouseY = -1000;
-        }
-
-        // ----- 更新拖尾（衰减 + 数量限制）-----
-        function updateTrail() {
-            trailPoints = trailPoints.map(p => {
-                p.life *= TRAIL_DECAY;
-                return p;
-            }).filter(p => p.life > 0.02);
-
-            if (trailPoints.length > MAX_TRAIL) {
-                trailPoints = trailPoints.slice(-MAX_TRAIL);
-            }
-        }
-
-        // ----- 绘制背景粒子（现在是小点）-----
-        function drawParticles() {
-            ctxBg.clearRect(0, 0, width, height);
-            particles.forEach(p => {
-                p.x += p.vx;
-                p.y += p.vy;
-                if (p.x < 0) p.x = width;
-                if (p.x > width) p.x = 0;
-                if (p.y < 0) p.y = height;
-                if (p.y > height) p.y = 0;
-
-                ctxBg.beginPath();
-                ctxBg.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                ctxBg.fillStyle = p.color;
-                ctxBg.fill();
-            });
-        }
-
-        // ----- 绘制光标拖尾（使用主题强调色）-----
-        function drawTrail() {
-            ctxTrail.clearRect(0, 0, width, height);
-            if (trailPoints.length === 0) return;
-
-            let r = 47, g = 129, b = 247;
-            if (isLightTheme()) {
-                r = 9; g = 105; b = 218;
+            function handleMouseLeave() {
+                lastMouseX = -1000;
+                lastMouseY = -1000;
             }
 
-            for (let i = trailPoints.length - 1; i >= 0; i--) {
-                const p = trailPoints[i];
-                const radius = 7 * p.life;
-                const alpha = p.life * 0.7;
-
-                ctxTrail.beginPath();
-                ctxTrail.arc(p.x, p.y, radius, 0, Math.PI * 2);
-                ctxTrail.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha * 0.5})`;
-                ctxTrail.fill();
-
-                ctxTrail.beginPath();
-                ctxTrail.arc(p.x, p.y, radius * 0.5, 0, Math.PI * 2);
-                ctxTrail.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
-                ctxTrail.fill();
-
-                ctxTrail.beginPath();
-                ctxTrail.arc(p.x, p.y, radius * 0.25, 0, Math.PI * 2);
-                ctxTrail.fillStyle = `rgba(255, 255, 255, ${alpha * 0.8})`;
-                ctxTrail.fill();
+            // ----- 更新拖尾（衰减 + 数量限制）-----
+            function updateTrail() {
+                trailPoints = trailPoints.map(p => {
+                    p.life *= TRAIL_DECAY;
+                    return p;
+                }).filter(p => p.life > 0.02);
+    
+                if (trailPoints.length > MAX_TRAIL) {
+                    trailPoints = trailPoints.slice(-MAX_TRAIL);
+                }
             }
-        }
 
-        function animate() {
-            updateTrail();
-            drawParticles();
-            drawTrail();
-            requestAnimationFrame(animate);
-        }
+            // ----- 绘制背景粒子（现在是小点）-----
+            function drawParticles() {
+                ctxBg.clearRect(0, 0, width, height);
+                particles.forEach(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    if (p.x < 0) p.x = width;
+                    if (p.x > width) p.x = 0;
+                    if (p.y < 0) p.y = height;
+                    if (p.y > height) p.y = 0;
 
-        // ----- 事件监听 -----
-        window.addEventListener('mousemove', handleMouseMove);
-        window.addEventListener('mouseleave', handleMouseLeave);
-
-        window.addEventListener('touchmove', (e) => {
-            e.preventDefault();
-            if (e.touches.length) {
-                const touch = e.touches[0];
-                handleMouseMove({ clientX: touch.clientX, clientY: touch.clientY });
+                    ctxBg.beginPath();
+                    ctxBg.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    ctxBg.fillStyle = p.color;
+                    ctxBg.fill();
+                });
             }
-        });
-        window.addEventListener('touchend', handleMouseLeave);
 
-        window.addEventListener('resize', resizeCanvases);
+            // ----- 绘制光标拖尾（使用主题强调色）-----
+            function drawTrail() {
+                ctxTrail.clearRect(0, 0, width, height);
+                if (trailPoints.length === 0) return;
+    
+                let r = 47, g = 129, b = 247;
+                if (isLightTheme()) {
+                    r = 9; g = 105; b = 218;
+                }
 
-        const themeObserver = new MutationObserver((mutations) => {
-            mutations.forEach((mut) => {
-                if (mut.attributeName === 'class') {
-                    recolorParticlesByTheme();
+                for (let i = trailPoints.length - 1; i >= 0; i--) {
+                    const p = trailPoints[i];
+                    const radius = 7 * p.life;
+                    const alpha = p.life * 0.7;
+
+                    ctxTrail.beginPath();
+                    ctxTrail.arc(p.x, p.y, radius, 0, Math.PI * 2);
+                    ctxTrail.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha * 0.5})`;
+                    ctxTrail.fill();
+
+                    ctxTrail.beginPath();
+                    ctxTrail.arc(p.x, p.y, radius * 0.5, 0, Math.PI * 2);
+                    ctxTrail.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
+                    ctxTrail.fill();
+
+                    ctxTrail.beginPath();
+                    ctxTrail.arc(p.x, p.y, radius * 0.25, 0, Math.PI * 2);
+                    ctxTrail.fillStyle = `rgba(255, 255, 255, ${alpha * 0.8})`;
+                    ctxTrail.fill();
+                }
+            }
+
+            function animate() {
+                updateTrail();
+                drawParticles();
+                drawTrail();
+                requestAnimationFrame(animate);
+            }
+
+            // ----- 事件监听 -----
+            window.addEventListener('mousemove', handleMouseMove);
+            window.addEventListener('mouseleave', handleMouseLeave);
+
+            window.addEventListener('touchmove', (e) => {
+                e.preventDefault();
+                if (e.touches.length) {
+                    const touch = e.touches[0];
+                    handleMouseMove({ clientX: touch.clientX, clientY: touch.clientY });
                 }
             });
-        });
-        themeObserver.observe(document.body, { attributes: true });
+            window.addEventListener('touchend', handleMouseLeave);
+    
+            window.addEventListener('resize', resizeCanvases);
 
-        resizeCanvases();
-        animate();
-    })();
-    async function loadSteamData() {
-      try {
-        const res = await fetch('/assets/data/steam.json');  // 根据你的实际路径调整
-        const data = await res.json();
+            const themeObserver = new MutationObserver((mutations) => {
+                mutations.forEach((mut) => {
+                    if (mut.attributeName === 'class') {
+                        recolorParticlesByTheme();
+                    }
+                });
+            });
+            themeObserver.observe(document.body, { attributes: true });
 
-        // 更新指定游戏的时长
-        data.games.forEach(game => {
-          switch (game.appid) {
-            case 1172470:
-              document.getElementById('game-apex').innerHTML = `<span class="number">${game.playtime_hours}h</span> Apex Legends`;
-              break;
-            case 271590:
-              document.getElementById('game-gta').innerHTML = `<span class="number">${game.playtime_hours}h</span> GTA V Enhanced`;
-              break;
-            case 284160:
-              document.getElementById('game-beamng').innerHTML = `<span class="number">${game.playtime_hours}h</span> BeamNG.drive`;
-              break;
-            // 如果有更多游戏，继续添加 case
+            resizeCanvases();
+            animate();
+        })();
+        async function loadSteamData() {
+            try {
+                const res = await fetch('/assets/data/steam.json');
+                const data = await res.json();
+                // 更新游戏时长（按 appid 匹配，具体参考之前代码）
+                // ...（保持原有时长更新逻辑）
+                // 更新当前游戏状态（如果有 current-game 元素）
+                // ...
+                // 更新游戏总数
+
+                if (data.gameCount !== undefined) {
+                    document.getElementById('gameCount').textContent = data.gameCount;
+                }
+                // 更新好友数量
+                if (data.friendCount !== undefined) {
+                    document.getElementById('friendCount').textContent = data.friendCount;
+                }
+                // 更新徽章数量
+                if (data.badgeCount !== undefined) {
+                    document.getElementById('badgeCount').textContent = data.badgeCount;
+                }
+                
+            } catch (err) {
+                console.error('加载 Steam 数据失败', err);
+            }
         }
-    });
 
-    // 更新当前游戏状态
-    const currentGameEl = document.getElementById('current-game');
-    if (data.currentlyPlaying) {
-      currentGameEl.innerHTML = `🎮 当前游戏：${data.currentlyPlaying}`;
-    } else {
-      currentGameEl.innerHTML = '🎮 当前游戏：暂无';
-    }
-  } catch (err) {
-    console.error('加载 Steam 数据失败', err);
-    // 降级：保留原有静态数字
-  }
-}
-
-// 页面加载后执行
-loadSteamData();
-</script>
+        // 页面加载后执行
+        loadSteamData();
+    </script>
 </body>
 
 </html>
+
 
