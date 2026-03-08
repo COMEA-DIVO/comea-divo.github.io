@@ -4,21 +4,20 @@ const https = require('https');
 const API_KEY = process.env.STEAM_API_KEY;
 const STEAM_ID = process.env.STEAM_ID;
 
-// 目标游戏 appid 列表
-const TARGET_GAMES = [1172470, 271590, 284160, 1938090]; // Apex, GTA V, BeamNG
+// 目标游戏 AppID 列表（按需修改）
+const TARGET_GAMES = [1172470, 271590, 284160]; // Apex, GTA V, BeamNG
 
-// API URLs
+// API 接口
 const gamesUrl = `https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/?key=${API_KEY}&steamid=${STEAM_ID}&include_appinfo=true&include_played_free_games=true&format=json`;
 const summaryUrl = `https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=${API_KEY}&steamids=${STEAM_ID}`;
 const friendsUrl = `https://api.steampowered.com/ISteamUser/GetFriendList/v1/?key=${API_KEY}&steamid=${STEAM_ID}&relationship=friend`;
 const badgesUrl = `https://api.steampowered.com/IPlayerService/GetBadges/v1/?key=${API_KEY}&steamid=${STEAM_ID}&format=json`;
 
-// 并发请求
 Promise.all([
   fetchJson(gamesUrl),
   fetchJson(summaryUrl),
-  fetchJson(friendsUrl).catch(() => null), // 好友列表可能因隐私失败
-  fetchJson(badgesUrl).catch(() => null)   // 徽章信息
+  fetchJson(friendsUrl).catch(() => null),
+  fetchJson(badgesUrl).catch(() => null)
 ]).then(([gamesData, summaryData, friendsData, badgesData]) => {
   const games = gamesData.response.games || [];
   const player = summaryData.response.players[0] || {};
@@ -48,7 +47,7 @@ Promise.all([
     currentlyPlaying: player.gameextrainfo || null,
     gameCount: games.length,
     friendCount: friendCount,
-    badgeCount: badgeCount,       // 新增徽章数量
+    badgeCount: badgeCount,          // 新增徽章数量
     lastUpdated: new Date().toISOString()
   };
 
@@ -60,7 +59,6 @@ Promise.all([
   process.exit(1);
 });
 
-// 辅助函数：获取 JSON 数据
 function fetchJson(url) {
   return new Promise((resolve, reject) => {
     https.get(url, (res) => {
@@ -77,7 +75,6 @@ function fetchJson(url) {
   });
 }
 
-// 辅助函数：确保目录存在
 function ensureDirSync(path) {
   if (!fs.existsSync(path)) {
     fs.mkdirSync(path, { recursive: true });
