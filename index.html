@@ -432,10 +432,12 @@
                     </div>
                 </div>
 
+                <!-- 游戏板块中，原有显示时长的 .stat 加上 ID -->
                 <div class="stat-row">
-                    <div class="stat"><span class="number">250h</span> Apex Legends</div>
-                    <div class="stat"><span class="number">459h</span> GTA V Enhanced</div>
-                    <div class="stat"><span class="number">524h</span> BeamNG.drive</div>
+                      <div class="stat" id="1172470"><span class="number">250h</span> Apex Legends</div>
+                      <div class="stat" id="3240220"><span class="number">459h</span> GTA V Enhanced</div>
+                      <div class="stat" id="284160"><span class="number">524h</span> BeamNG.drive</div>
+                      <div class="stat" id="1938090"><span class="number">524h</span> Call of Duty</div>
                 </div>
 
                 <h3 style="margin: 1.8rem 0 1rem; font-size: 1.2rem;">✨ 高光成就</h3>
@@ -797,6 +799,43 @@
         resizeCanvases();
         animate();
     })();
+    async function loadSteamData() {
+      try {
+        const res = await fetch('/assets/data/steam.json');  // 根据你的实际路径调整
+        const data = await res.json();
+
+        // 更新指定游戏的时长
+        data.games.forEach(game => {
+          switch (game.appid) {
+            case 1172470:
+              document.getElementById('game-apex').innerHTML = `<span class="number">${game.playtime_hours}h</span> Apex Legends`;
+              break;
+            case 271590:
+              document.getElementById('game-gta').innerHTML = `<span class="number">${game.playtime_hours}h</span> GTA V Enhanced`;
+              break;
+            case 284160:
+              document.getElementById('game-beamng').innerHTML = `<span class="number">${game.playtime_hours}h</span> BeamNG.drive`;
+              break;
+            // 如果有更多游戏，继续添加 case
+        }
+    });
+
+    // 更新当前游戏状态
+    const currentGameEl = document.getElementById('current-game');
+    if (data.currentlyPlaying) {
+      currentGameEl.innerHTML = `🎮 当前游戏：${data.currentlyPlaying}`;
+    } else {
+      currentGameEl.innerHTML = '🎮 当前游戏：暂无';
+    }
+  } catch (err) {
+    console.error('加载 Steam 数据失败', err);
+    // 降级：保留原有静态数字
+  }
+}
+
+// 页面加载后执行
+loadSteamData();
 </script>
 </body>
+
 </html>
