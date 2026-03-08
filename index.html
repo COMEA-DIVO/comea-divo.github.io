@@ -282,9 +282,27 @@
             .card { padding: 1.5rem; }
             .footer-meta a { margin-left: 1rem; }
         }
+        /* 画布层 —— 固定定位、穿透鼠标事件 */
+        .canvas-bg,
+        .canvas-trail {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;  /* 保证鼠标可以穿透点击下方元素 */
+            z-index: -1;            /* 背景粒子放在最下层 */
+}
+        .canvas-trail {
+            z-index: 9999;          /* 拖尾浮在最上层但不遮挡点击 */
+        }
     </style>
 </head>
 <body>
+    <!-- 背景粒子画布（底层） -->
+    <canvas id="particleCanvas" class="canvas-bg"></canvas>
+    <!-- 光标拖尾画布（顶层，不阻挡点击） -->
+    <canvas id="trailCanvas" class="canvas-trail"></canvas>
     <div class="container">
         <!-- 导航 + 头像 + 主题 -->
         <div class="navbar">
@@ -394,7 +412,6 @@
                     <span class="stat"><span class="number">178</span> DLC</span>
                     <span class="stat"><span class="number">41</span> 好友</span>
                     <span class="stat"><span class="number">69</span> 截图</span>
-                    <button class="fresh-btn" id="refreshGameCount">↻ 刷新</button>
                 </div>
 
                 <div style="margin: 1.5rem 0;">
@@ -417,8 +434,8 @@
 
                 <div class="stat-row">
                     <div class="stat"><span class="number">250h</span> Apex Legends</div>
-                    <div class="stat"><span class="number">459h</span> GTA V 增强版</div>
-                    <div class="stat"><span class="number">51h</span> Wallpaper Engine</div>
+                    <div class="stat"><span class="number">459h</span> GTA V Enhanced</div>
+                    <div class="stat"><span class="number">524h</span> BeamNG.drive</div>
                 </div>
 
                 <h3 style="margin: 1.8rem 0 1rem; font-size: 1.2rem;">✨ 高光成就</h3>
@@ -528,50 +545,258 @@
     </div>
 
     <script>
-        (function() {
-            const toggle = document.getElementById('theme-toggle');
-            const icon = document.getElementById('theme-icon');
-            const text = document.getElementById('theme-text');
-            const body = document.body;
+    // 主题切换功能
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    const themeText = document.getElementById('theme-text');
 
-            const savedTheme = localStorage.getItem('comea-theme');
-            if (savedTheme === 'light') {
-                body.classList.add('light-theme');
-                icon.innerText = '☀️';
-                text.innerText = '亮色';
+    // 初始化按钮文字（根据当前主题）
+    function updateThemeButton() {
+        const isLight = document.body.classList.contains('light-theme');
+        themeIcon.textContent = isLight ? '☀️' : '🌙';
+        themeText.textContent = isLight ? '亮色' : '暗色';
+    }
+    updateThemeButton(); // 页面加载时执行一次
+
+    // 点击切换主题
+    themeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('light-theme');
+        updateThemeButton();
+        // 粒子颜色会自动更新，因为已有 MutationObserver 监听 class 变化
+    });
+
+    // （可选）让键盘 Enter/Space 也能触发（提升可访问性）
+    themeToggle.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            themeToggle.click();
+        }
+    });
+    (function() {
+        // ----- 获取画布 -----
+        const canvasBg = document.getElementById('particleCanvas');
+        const canvasTrail = document.getElementById('trailCanvas');
+        if (!canvasBg || !canvasTrail) return;
+
+        const ctxBg = canvasBg.getContext('2d');
+        const ctxTrail = canvasTrail.getContext('2d');
+
+        let width, height;
+        let particles = [];
+        const PARTICLE_COUNT = 300;
+
+        // 鼠标轨迹数据
+        let trailPoints = [];
+        // 【修改】拖尾更长：最大点数 48 → 80，衰减系数 0.93 → 0.96
+        const MAX_TRAIL = 80;                 
+        const TRAIL_DECAY = 0.96;              
+        const INTERP_STEP = 2.5;                // 插值步长（保持不变）
+
+        // 最后记录的鼠标位置（用于插值）
+        let lastMouseX = -1000, lastMouseY = -1000;
+
+        // ----- 辅助：判断当前主题 -----
+        function isLightTheme() {
+            return document.body.classList.contains('light-theme');
+        }
+
+        // ----- 根据主题生成随机粒子颜色 -----
+        function getRandomParticleColor(light) {
+            if (light) {
+                return `rgba(0, 0, 0, ${Math.random() * 0.3 + 0.15})`;
+            } else {
+                return `rgba(255, 255, 255, ${Math.random() * 0.3 + 0.15})`;
+            }
+        }
+
+        // ----- 初始化/重置粒子 -----
+        function initParticles(light) {
+            particles = [];
+            for (let i = 0; i < PARTICLE_COUNT; i++) {
+                particles.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    vx: (Math.random() - 0.5) * 0.25,
+                    vy: (Math.random() - 0.5) * 0.25,
+                    // 【修改】粒子尺寸范围缩小：1.2~4.7 → 0.8~1.8，变成更小的点
+                    size: Math.random() * 1.0 + 0.8,   // 最小0.8，最大1.8
+                    color: getRandomParticleColor(light)
+                });
+            }
+        }
+
+        // ----- 根据当前主题更新所有粒子颜色（主题切换时调用）-----
+        function recolorParticlesByTheme() {
+            const light = isLightTheme();
+            particles.forEach(p => {
+                p.color = getRandomParticleColor(light);
+            });
+        }
+
+        // ----- 调整画布尺寸（支持高分屏）-----
+        function resizeCanvases() {
+            const dpr = window.devicePixelRatio || 1;
+            width = window.innerWidth;
+            height = window.innerHeight;
+
+            canvasBg.style.width = width + 'px';
+            canvasBg.style.height = height + 'px';
+            canvasBg.width = width * dpr;
+            canvasBg.height = height * dpr;
+
+            canvasTrail.style.width = width + 'px';
+            canvasTrail.style.height = height + 'px';
+            canvasTrail.width = width * dpr;
+            canvasTrail.height = height * dpr;
+
+            ctxBg.setTransform(1, 0, 0, 1, 0, 0);
+            ctxTrail.setTransform(1, 0, 0, 1, 0, 0);
+            ctxBg.scale(dpr, dpr);
+            ctxTrail.scale(dpr, dpr);
+
+            initParticles(isLightTheme());
+        }
+
+        // ----- 鼠标移动处理（带插值补点，狂晃鼠标也不断）-----
+        function handleMouseMove(e) {
+            const mx = e.clientX;
+            const my = e.clientY;
+
+            if (lastMouseX < 0 || lastMouseY < 0) {
+                trailPoints.push({ x: mx, y: my, life: 1.0 });
+                lastMouseX = mx;
+                lastMouseY = my;
+                return;
             }
 
-            toggle.addEventListener('click', () => {
-                if (body.classList.contains('light-theme')) {
-                    body.classList.remove('light-theme');
-                    icon.innerText = '🌙';
-                    text.innerText = '暗色';
-                    localStorage.setItem('comea-theme', 'dark');
-                } else {
-                    body.classList.add('light-theme');
-                    icon.innerText = '☀️';
-                    text.innerText = '亮色';
-                    localStorage.setItem('comea-theme', 'light');
+            const dx = mx - lastMouseX;
+            const dy = my - lastMouseY;
+            const dist = Math.hypot(dx, dy);
+
+            if (dist > INTERP_STEP) {
+                const steps = Math.floor(dist / INTERP_STEP);
+                const maxInsert = 20;
+                const insertCount = Math.min(steps, maxInsert);
+
+                for (let i = 1; i <= insertCount; i++) {
+                    const t = i / (insertCount + 1);
+                    const ix = lastMouseX + dx * t;
+                    const iy = lastMouseY + dy * t;
+                    trailPoints.push({ x: ix, y: iy, life: 1.0 });
+                }
+            }
+
+            trailPoints.push({ x: mx, y: my, life: 1.0 });
+
+            lastMouseX = mx;
+            lastMouseY = my;
+
+            if (trailPoints.length > MAX_TRAIL * 2) {
+                trailPoints = trailPoints.slice(-MAX_TRAIL * 1.5);
+            }
+        }
+
+        function handleMouseLeave() {
+            lastMouseX = -1000;
+            lastMouseY = -1000;
+        }
+
+        // ----- 更新拖尾（衰减 + 数量限制）-----
+        function updateTrail() {
+            trailPoints = trailPoints.map(p => {
+                p.life *= TRAIL_DECAY;
+                return p;
+            }).filter(p => p.life > 0.02);
+
+            if (trailPoints.length > MAX_TRAIL) {
+                trailPoints = trailPoints.slice(-MAX_TRAIL);
+            }
+        }
+
+        // ----- 绘制背景粒子（现在是小点）-----
+        function drawParticles() {
+            ctxBg.clearRect(0, 0, width, height);
+            particles.forEach(p => {
+                p.x += p.vx;
+                p.y += p.vy;
+                if (p.x < 0) p.x = width;
+                if (p.x > width) p.x = 0;
+                if (p.y < 0) p.y = height;
+                if (p.y > height) p.y = 0;
+
+                ctxBg.beginPath();
+                ctxBg.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctxBg.fillStyle = p.color;
+                ctxBg.fill();
+            });
+        }
+
+        // ----- 绘制光标拖尾（使用主题强调色）-----
+        function drawTrail() {
+            ctxTrail.clearRect(0, 0, width, height);
+            if (trailPoints.length === 0) return;
+
+            let r = 47, g = 129, b = 247;
+            if (isLightTheme()) {
+                r = 9; g = 105; b = 218;
+            }
+
+            for (let i = trailPoints.length - 1; i >= 0; i--) {
+                const p = trailPoints[i];
+                const radius = 7 * p.life;
+                const alpha = p.life * 0.7;
+
+                ctxTrail.beginPath();
+                ctxTrail.arc(p.x, p.y, radius, 0, Math.PI * 2);
+                ctxTrail.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha * 0.5})`;
+                ctxTrail.fill();
+
+                ctxTrail.beginPath();
+                ctxTrail.arc(p.x, p.y, radius * 0.5, 0, Math.PI * 2);
+                ctxTrail.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
+                ctxTrail.fill();
+
+                ctxTrail.beginPath();
+                ctxTrail.arc(p.x, p.y, radius * 0.25, 0, Math.PI * 2);
+                ctxTrail.fillStyle = `rgba(255, 255, 255, ${alpha * 0.8})`;
+                ctxTrail.fill();
+            }
+        }
+
+        function animate() {
+            updateTrail();
+            drawParticles();
+            drawTrail();
+            requestAnimationFrame(animate);
+        }
+
+        // ----- 事件监听 -----
+        window.addEventListener('mousemove', handleMouseMove);
+        window.addEventListener('mouseleave', handleMouseLeave);
+
+        window.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            if (e.touches.length) {
+                const touch = e.touches[0];
+                handleMouseMove({ clientX: touch.clientX, clientY: touch.clientY });
+            }
+        });
+        window.addEventListener('touchend', handleMouseLeave);
+
+        window.addEventListener('resize', resizeCanvases);
+
+        const themeObserver = new MutationObserver((mutations) => {
+            mutations.forEach((mut) => {
+                if (mut.attributeName === 'class') {
+                    recolorParticlesByTheme();
                 }
             });
+        });
+        themeObserver.observe(document.body, { attributes: true });
 
-            const gameCountSpan = document.getElementById('gameCount');
-            const refreshBtn = document.getElementById('refreshGameCount');
-            refreshBtn.addEventListener('click', function() {
-                const current = parseInt(gameCountSpan.innerText);
-                const change = Math.floor(Math.random() * 5) - 2;
-                let newCount = current + change;
-                if (newCount < 80) newCount = 80;
-                if (newCount > 90) newCount = 90;
-                gameCountSpan.innerText = newCount;
-
-                alert('[演示模式] 游戏数量已模拟更新。\n\n要获取真实 Steam 数据，请使用以下方法：\n1. 获取 Steam API 密钥 (https://steamcommunity.com/dev/apikey)\n2. 替换下方代码中的 YOUR_KEY 和 STEAM_ID\n3. 通过后端代理或支持 CORS 的服务调用\n\nfetch(`https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/?key=YOUR_KEY&steamid=76561199131331378&include_appinfo=false&format=json`)\n  .then(r => r.json())\n  .then(data => { const count = data.response.game_count; });');
-            });
-
-            toggle.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle.click(); } });
-            refreshBtn.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); refreshBtn.click(); } });
-        })();
-    </script>
+        resizeCanvases();
+        animate();
+    })();
+</script>
 </body>
-
 </html>
