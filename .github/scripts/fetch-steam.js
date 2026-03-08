@@ -5,7 +5,7 @@ const API_KEY = process.env.STEAM_API_KEY;
 const STEAM_ID = process.env.STEAM_ID;
 
 // 目标游戏 AppID 列表（按需修改）
-const TARGET_GAMES = [1172470, 271590, 284160]; // Apex, GTA V, BeamNG
+const TARGET_GAMES = [1172470, 271590, 284160, 1938090]; // Apex, GTA V, BeamNG
 
 // API 接口
 const gamesUrl = `https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/?key=${API_KEY}&steamid=${STEAM_ID}&include_appinfo=true&include_played_free_games=true&format=json`;
