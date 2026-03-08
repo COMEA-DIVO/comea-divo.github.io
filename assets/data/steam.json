@@ -1,0 +1,33 @@
+{
+  "games": [
+    {
+      "appid": 271590,
+      "name": "Grand Theft Auto V Legacy",
+      "playtime_hours": 473,
+      "icon": "https://media.steampowered.com/steamcommunity/public/images/apps/271590/1e72f87eb927fa1485e68aefaff23c7fd7178251.jpg"
+    },
+    {
+      "appid": 284160,
+      "name": "BeamNG.drive",
+      "playtime_hours": 516,
+      "icon": "https://media.steampowered.com/steamcommunity/public/images/apps/284160/34f8997c32b2f463caf2014aab4a95109a896ecc.jpg"
+    },
+    {
+      "appid": 1172470,
+      "name": "Apex Legends",
+      "playtime_hours": 250,
+      "icon": "https://media.steampowered.com/steamcommunity/public/images/apps/1172470/1bd542699970c8a2d82d114da3fe4e466209e717.jpg"
+    },
+    {
+      "appid": 1938090,
+      "name": "Call of Duty®",
+      "playtime_hours": 963,
+      "icon": "https://media.steampowered.com/steamcommunity/public/images/apps/1938090/8eaf32220060344996cbf11f697a4f4be943e5f3.jpg"
+    }
+  ],
+  "currentlyPlaying": null,
+  "gameCount": 139,
+  "friendCount": 41,
+  "badgeCount": 7,
+  "lastUpdated": "2026-03-08T05:09:30.616Z"
+}
