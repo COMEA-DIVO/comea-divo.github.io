@@ -10,7 +10,7 @@
       "appid": 1172470,
       "name": "Apex Legends",
       "playtime_hours": 262,
-      "icon": "https://media.steampowered.com/steamcommunity/public/images/apps/1172470/1bd542699970c8a2d82d114da3fe4e466209e717.jpg"
+      "icon": "https://media.steampowered.com/steamcommunity/public/images/apps/1172470/8986dd626da56db5f3fe09bc1b8871739de8b00d.jpg"
     },
     {
       "appid": 1938090,
@@ -21,7 +21,7 @@
     {
       "appid": 3240220,
       "name": "Grand Theft Auto V Enhanced",
-      "playtime_hours": 473,
+      "playtime_hours": 475,
       "icon": "https://media.steampowered.com/steamcommunity/public/images/apps/3240220/8355a7bbdb704f727bfba80ec56bc7228991338e.jpg"
     }
   ],
@@ -29,5 +29,5 @@
   "gameCount": 140,
   "friendCount": 41,
   "badgeCount": 7,
-  "lastUpdated": "2026-03-13T13:04:31.827Z"
+  "lastUpdated": "2026-03-13T14:43:37.525Z"
 }
