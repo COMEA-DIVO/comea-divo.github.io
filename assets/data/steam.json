@@ -25,9 +25,9 @@
       "icon": "https://media.steampowered.com/steamcommunity/public/images/apps/3240220/8355a7bbdb704f727bfba80ec56bc7228991338e.jpg"
     }
   ],
-  "currentlyPlaying": "OBS Studio",
+  "currentlyPlaying": null,
   "gameCount": 147,
   "friendCount": 45,
   "badgeCount": 8,
-  "lastUpdated": "2026-06-22T15:53:27.959Z"
+  "lastUpdated": "2026-06-22T19:31:16.185Z"
 }
