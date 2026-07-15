@@ -9,7 +9,7 @@
     {
       "appid": 1172470,
       "name": "Apex Legends",
-      "playtime_hours": 388,
+      "playtime_hours": 389,
       "icon": "https://media.steampowered.com/steamcommunity/public/images/apps/1172470/8986dd626da56db5f3fe09bc1b8871739de8b00d.jpg"
     },
     {
@@ -25,9 +25,9 @@
       "icon": "https://media.steampowered.com/steamcommunity/public/images/apps/3240220/8355a7bbdb704f727bfba80ec56bc7228991338e.jpg"
     }
   ],
-  "currentlyPlaying": "Euro Truck Simulator 2",
+  "currentlyPlaying": "Apex Legends",
   "gameCount": 150,
   "friendCount": 45,
   "badgeCount": 10,
-  "lastUpdated": "2026-07-15T05:33:30.784Z"
+  "lastUpdated": "2026-07-15T08:14:21.143Z"
 }
