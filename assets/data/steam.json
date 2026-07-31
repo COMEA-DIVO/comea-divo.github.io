@@ -3,13 +3,13 @@
     {
       "appid": 284160,
       "name": "BeamNG.drive",
-      "playtime_hours": 540,
+      "playtime_hours": 541,
       "icon": "https://media.steampowered.com/steamcommunity/public/images/apps/284160/34f8997c32b2f463caf2014aab4a95109a896ecc.jpg"
     },
     {
       "appid": 1172470,
       "name": "Apex Legends",
-      "playtime_hours": 393,
+      "playtime_hours": 394,
       "icon": "https://media.steampowered.com/steamcommunity/public/images/apps/1172470/8986dd626da56db5f3fe09bc1b8871739de8b00d.jpg"
     },
     {
@@ -21,13 +21,13 @@
     {
       "appid": 3240220,
       "name": "Grand Theft Auto V Enhanced",
-      "playtime_hours": 559,
+      "playtime_hours": 561,
       "icon": "https://media.steampowered.com/steamcommunity/public/images/apps/3240220/8355a7bbdb704f727bfba80ec56bc7228991338e.jpg"
     }
   ],
-  "currentlyPlaying": "Grand Theft Auto V Enhanced",
+  "currentlyPlaying": "Apex Legends",
   "gameCount": 151,
   "friendCount": 46,
   "badgeCount": 10,
-  "lastUpdated": "2026-07-31T12:00:45.614Z"
+  "lastUpdated": "2026-07-31T15:20:09.073Z"
 }
