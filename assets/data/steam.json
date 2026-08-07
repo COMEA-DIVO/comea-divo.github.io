@@ -9,7 +9,7 @@
     {
       "appid": 1172470,
       "name": "Apex Legends",
-      "playtime_hours": 401,
+      "playtime_hours": 402,
       "icon": "https://media.steampowered.com/steamcommunity/public/images/apps/1172470/8986dd626da56db5f3fe09bc1b8871739de8b00d.jpg"
     },
     {
@@ -25,9 +25,9 @@
       "icon": "https://media.steampowered.com/steamcommunity/public/images/apps/3240220/8355a7bbdb704f727bfba80ec56bc7228991338e.jpg"
     }
   ],
-  "currentlyPlaying": "Counter-Strike 2",
+  "currentlyPlaying": "FlowTrak Demo",
   "gameCount": 151,
   "friendCount": 46,
   "badgeCount": 10,
-  "lastUpdated": "2026-08-07T13:06:51.072Z"
+  "lastUpdated": "2026-08-07T14:53:40.339Z"
 }
