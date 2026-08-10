@@ -3,7 +3,7 @@
     {
       "appid": 284160,
       "name": "BeamNG.drive",
-      "playtime_hours": 544,
+      "playtime_hours": 545,
       "icon": "https://media.steampowered.com/steamcommunity/public/images/apps/284160/34f8997c32b2f463caf2014aab4a95109a896ecc.jpg"
     },
     {
@@ -25,9 +25,9 @@
       "icon": "https://media.steampowered.com/steamcommunity/public/images/apps/3240220/8355a7bbdb704f727bfba80ec56bc7228991338e.jpg"
     }
   ],
-  "currentlyPlaying": "FlowTrak Demo",
+  "currentlyPlaying": null,
   "gameCount": 151,
   "friendCount": 46,
   "badgeCount": 10,
-  "lastUpdated": "2026-08-10T16:05:28.562Z"
+  "lastUpdated": "2026-08-10T17:52:07.509Z"
 }
