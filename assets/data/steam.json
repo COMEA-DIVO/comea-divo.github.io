@@ -21,13 +21,13 @@
     {
       "appid": 3240220,
       "name": "Grand Theft Auto V Enhanced",
-      "playtime_hours": 583,
+      "playtime_hours": 584,
       "icon": "https://media.steampowered.com/steamcommunity/public/images/apps/3240220/8355a7bbdb704f727bfba80ec56bc7228991338e.jpg"
     }
   ],
-  "currentlyPlaying": "FlowTrak Demo",
+  "currentlyPlaying": null,
   "gameCount": 153,
   "friendCount": 45,
   "badgeCount": 10,
-  "lastUpdated": "2026-09-03T13:19:45.571Z"
+  "lastUpdated": "2026-09-03T17:36:06.720Z"
 }
