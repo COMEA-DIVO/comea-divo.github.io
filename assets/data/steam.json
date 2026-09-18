@@ -25,9 +25,9 @@
       "icon": "https://media.steampowered.com/steamcommunity/public/images/apps/3240220/8355a7bbdb704f727bfba80ec56bc7228991338e.jpg"
     }
   ],
-  "currentlyPlaying": "Counter-Strike 2",
+  "currentlyPlaying": null,
   "gameCount": 153,
   "friendCount": 46,
   "badgeCount": 10,
-  "lastUpdated": "2026-09-18T14:10:37.907Z"
+  "lastUpdated": "2026-09-18T18:06:56.557Z"
 }
