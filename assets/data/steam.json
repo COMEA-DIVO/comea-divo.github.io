@@ -15,7 +15,7 @@
     {
       "appid": 1938090,
       "name": "Call of Duty®",
-      "playtime_hours": 978,
+      "playtime_hours": 979,
       "icon": "https://media.steampowered.com/steamcommunity/public/images/apps/1938090/8eaf32220060344996cbf11f697a4f4be943e5f3.jpg"
     },
     {
@@ -25,9 +25,9 @@
       "icon": "https://media.steampowered.com/steamcommunity/public/images/apps/3240220/8355a7bbdb704f727bfba80ec56bc7228991338e.jpg"
     }
   ],
-  "currentlyPlaying": null,
+  "currentlyPlaying": "Call of Duty®",
   "gameCount": 154,
   "friendCount": 46,
   "badgeCount": 10,
-  "lastUpdated": "2026-10-17T11:27:23.520Z"
+  "lastUpdated": "2026-10-17T15:09:34.502Z"
 }
