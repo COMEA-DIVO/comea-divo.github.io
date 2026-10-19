@@ -15,7 +15,7 @@
     {
       "appid": 1938090,
       "name": "Call of Duty®",
-      "playtime_hours": 984,
+      "playtime_hours": 987,
       "icon": "https://media.steampowered.com/steamcommunity/public/images/apps/1938090/8eaf32220060344996cbf11f697a4f4be943e5f3.jpg"
     },
     {
@@ -25,9 +25,9 @@
       "icon": "https://media.steampowered.com/steamcommunity/public/images/apps/3240220/8355a7bbdb704f727bfba80ec56bc7228991338e.jpg"
     }
   ],
-  "currentlyPlaying": "NekoTrak",
+  "currentlyPlaying": null,
   "gameCount": 155,
   "friendCount": 46,
   "badgeCount": 10,
-  "lastUpdated": "2026-10-19T12:27:35.992Z"
+  "lastUpdated": "2026-10-19T19:05:53.711Z"
 }
