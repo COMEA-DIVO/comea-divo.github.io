@@ -9,13 +9,13 @@
     {
       "appid": 1172470,
       "name": "Apex Legends",
-      "playtime_hours": 460,
+      "playtime_hours": 462,
       "icon": "https://media.steampowered.com/steamcommunity/public/images/apps/1172470/8986dd626da56db5f3fe09bc1b8871739de8b00d.jpg"
     },
     {
       "appid": 1938090,
       "name": "Call of Duty®",
-      "playtime_hours": 1030,
+      "playtime_hours": 1032,
       "icon": "https://media.steampowered.com/steamcommunity/public/images/apps/1938090/8eaf32220060344996cbf11f697a4f4be943e5f3.jpg"
     },
     {
@@ -29,5 +29,5 @@
   "gameCount": 157,
   "friendCount": 47,
   "badgeCount": 10,
-  "lastUpdated": "2026-11-04T08:56:25.742Z"
+  "lastUpdated": "2026-11-04T16:57:37.818Z"
 }
