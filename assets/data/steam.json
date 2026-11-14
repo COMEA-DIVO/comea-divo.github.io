@@ -21,13 +21,13 @@
     {
       "appid": 3240220,
       "name": "Grand Theft Auto V Enhanced",
-      "playtime_hours": 596,
+      "playtime_hours": 598,
       "icon": "https://media.steampowered.com/steamcommunity/public/images/apps/3240220/8355a7bbdb704f727bfba80ec56bc7228991338e.jpg"
     }
   ],
-  "currentlyPlaying": null,
+  "currentlyPlaying": "Euro Truck Simulator 2",
   "gameCount": 157,
   "friendCount": 48,
   "badgeCount": 10,
-  "lastUpdated": "2026-11-14T00:44:50.306Z"
+  "lastUpdated": "2026-11-14T07:26:26.549Z"
 }
