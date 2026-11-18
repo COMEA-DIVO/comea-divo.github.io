@@ -21,13 +21,13 @@
     {
       "appid": 3240220,
       "name": "Grand Theft Auto V Enhanced",
-      "playtime_hours": 599,
+      "playtime_hours": 600,
       "icon": "https://media.steampowered.com/steamcommunity/public/images/apps/3240220/8355a7bbdb704f727bfba80ec56bc7228991338e.jpg"
     }
   ],
-  "currentlyPlaying": null,
+  "currentlyPlaying": "Grand Theft Auto V Enhanced",
   "gameCount": 157,
   "friendCount": 48,
   "badgeCount": 10,
-  "lastUpdated": "2026-11-18T01:30:45.192Z"
+  "lastUpdated": "2026-11-18T09:50:49.033Z"
 }
